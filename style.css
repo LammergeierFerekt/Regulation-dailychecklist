@@ -183,3 +183,15 @@ h1 {
   -webkit-tap-highlight-color: transparent;
 }
 
+#page g[id^="button."] {
+  touch-action: manipulation;
+}
+
+
+#page text {
+  transition: opacity 220ms ease, filter 180ms ease;
+}
+
+#page text.is-done {
+  opacity: 0.5;
+}
