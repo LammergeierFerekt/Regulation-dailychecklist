@@ -1,48 +1,97 @@
 /* =========================
+   BASE / RESET
+   ========================= */
+
+html, body {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;     /* ← no scrolling */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* =========================
    PAGE LAYOUT
    ========================= */
 
 .page {
-  min-height: 100vh;
-  padding: 24px;
+  /* Use svh so mobile browser bars don’t mess layout */
+  min-height: 100svh;
+
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 
-  /* center the board area */
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  /* Safe-area aware padding (iOS) */
+  padding:
+    calc(16px + env(safe-area-inset-top))
+    calc(16px + env(safe-area-inset-right))
+    calc(16px + env(safe-area-inset-bottom))
+    calc(16px + env(safe-area-inset-left));
 }
 
-.topbar {
-  width: 100%;
-  max-width: 900px;
-  margin-bottom: 16px;
-}
 
-/* If you meant the page title in HTML, use h1 (not .h1).
-   If you meant SVG text styling, we style #page text below. */
-h1 {
-  margin: 0;
-  color: #3f4d52;
-  font-weight: 600;
-}
+
 
 /* =========================
-   BOARD WRAPPER (CENTER + NO CLIP)
+   MOBILE PORTRAIT: HEIGHT-DRIVEN SCALING (THIS IS THE KEY)
+   ========================= */
+
+@media (max-width: 520px) and (orientation: portrait) {
+  #page {
+    height: 86svh;     /* <-- change this to make it bigger/smaller */
+    width: auto;       /* <-- IMPORTANT: let height control the size */
+    max-width: 96vw;   /* safety: don’t overflow horizontally */
+    max-height: none;  /* height already controls it */
+  }
+
+  h1 {
+    font-size: 18px;
+  }
+}
+
+/* Landscape phones: keep it from being too tall */
+@media (max-height: 520px) and (orientation: landscape) {
+  #page {
+    height: 70vh;
+    width: auto;
+    max-width: 90vw;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* =========================
+   BOARD WRAPPER
    ========================= */
 
 .board {
-  margin-top: 100px;
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  /* keeps it visually centered on the page */
   flex: 1;
 
-  /* IMPORTANT: don’t clip hover/toggle animations */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* Don’t clip hover/toggle shadows/slide */
   overflow: visible;
+
+  /* Desktop default spacing */
+  margin-top: 80px;
 }
 
 /* =========================
@@ -51,102 +100,114 @@ h1 {
 
 #page {
   display: block;
-  width: min(360px, 90vw);   /* tweak 360px to resize */
-  height: auto;
-  max-height: 80vh;
 
-  /* IMPORTANT: don’t clip hover/toggle animations */
+  /* Desktop default size */
+  width: min(420px, 92vw);
+  height: 80vh;
+
+  /* Don’t clip effects */
   overflow: visible;
 }
 
 /* =========================
-   SVG INTERACTION LAYER
+   SVG INTERACTION: BUTTONS
    ========================= */
 
-/* Buttons (groups) */
 #page g[id^="button."] {
   cursor: pointer;
   transition: transform 180ms ease, filter 180ms ease;
   transform-origin: center;
-  /* subtle shadow by default */
   filter: drop-shadow(0 1px 2px rgba(0,0,0,.25));
+
+  /* mobile */
+  touch-action: manipulation;
 }
 
-/* Hover on group */
 #page g[id^="button."]:hover {
   transform: translateY(-0.5px);
   filter: drop-shadow(0 2px 4px rgba(0,0,0,.35));
 }
 
-/* Circles (toggle target) */
-#page g[id^="button."] circle {
-  transition: transform 220ms ease, fill 220ms ease, filter 220ms ease;
-  filter: drop-shadow(0 1px 2px rgba(199, 125, 255, 0.75));
-  fill: rgb(255, 255, 255) !important;   /* soft translucent default */
-  opacity: 1;
-  /* helps transform behave consistently in some browsers */
-  transform-box: fill-box;
-  transform-origin: center;
+/* Remove ugly focus outline (desktop keyboard) */
+#page g[id^="button."]:focus,
+#page g[id^="button."]:focus-visible,
+#page g[id^="button."] *:focus,
+#page g[id^="button."] *:focus-visible {
+  outline: none;
 }
 
-/* Hover circle */
+/* Remove tap highlight on iOS */
+#page, #page * {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* =========================
+   SVG INTERACTION: CIRCLES
+   ========================= */
+
+#page g[id^="button."] circle {
+  transition: transform 220ms ease, fill 220ms ease, opacity 220ms ease, filter 220ms ease;
+  transform-box: fill-box;
+  transform-origin: center;
+
+  /* slightly transparent when NOT checked */
+  fill: #ffffff !important;
+
+
+  filter: drop-shadow(0 1px 2px rgba(211, 109, 255, 0.55));
+}
+
 #page g[id^="button."]:hover circle {
   filter: drop-shadow(0 1px 2px rgba(98, 90, 125, 0.55));
 }
 
-/* ✅ Checked state: slide right + purple */
+/* Checked circle: slide right + opaque + glow */
 #page g[id^="button."].is-checked circle {
   transform: translateX(16px);
+  opacity: 1;
   fill: #ffffff !important;
   filter: drop-shadow(0 3px 3px rgba(163, 253, 255, 0.75));
 }
 
-/* SVG text (force override of inline svg styles) */
+/* =========================
+   SVG TEXT
+   ========================= */
+
 #page text {
-  fill:#3f4d52 !important;
+  fill: #3f4d52 !important;
   font-size: 12px !important;
   font-family: Barlow, Arial, sans-serif !important;
   font-weight: 300 !important;
+
+  transition: opacity 220ms ease, filter 180ms ease;
 }
 
-
-
-
+#page text.is-done {
+  opacity: 0.5;
+}
 
 /* =========================
-   COMPLETION MESSAGE TYPOGRAPHY
+   COMPLETION OVERLAY
    ========================= */
 
 #congrats-message {
   position: fixed;
   inset: 0;
-  display: none;                 /* JS toggles this */
+
+  display: none;              /* JS sets to flex */
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  flex-direction: column;
+  gap: 6px;
 
-  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-  font-size: 18px;
-  font-weight: 600;
-  color: #3f4d52;
+  padding: 24px;
+  text-align: center;
 
   backdrop-filter: blur(8px);
   background: rgba(255, 255, 255, 0.55);
   z-index: 9999;
-
-  text-align: center;
 }
 
-
-
-#congrats-message {
-  display: none;               /* JS toggles to flex */
-  flex-direction: column;
-  gap: 6px;
-  text-align: center;
-}
-
-/* Main line */
 #congrats-message .line-1 {
   font-size: 45px;
   color: #4d5e87;
@@ -155,7 +216,6 @@ h1 {
   letter-spacing: -0.015em;
 }
 
-/* Secondary line */
 #congrats-message .line-2 {
   font-size: 25px;
   color: #4d5e87;
@@ -167,31 +227,12 @@ h1 {
 
 
 
-/* Remove focus outline for SVG interactive groups */
-#page g[id^="button."]:focus,
-#page g[id^="button."]:focus-visible {
-  outline: none;
-}
-
-/* Some browsers put the outline on inner elements */
-#page g[id^="button."] *:focus,
-#page g[id^="button."] *:focus-visible {
-  outline: none;
-}
-
-#page, #page * {
-  -webkit-tap-highlight-color: transparent;
-}
-
-#page g[id^="button."] {
-  touch-action: manipulation;
-}
 
 
-#page text {
-  transition: opacity 220ms ease, filter 180ms ease;
-}
 
-#page text.is-done {
-  opacity: 0.5;
-}
+
+
+/* =========================
+   MOBILE SCALING
+   ========================= */
+

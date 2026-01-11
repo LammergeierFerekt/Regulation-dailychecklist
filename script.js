@@ -123,7 +123,7 @@
 
   // ---- reset timer (TEST: 5 seconds; production: midnight) ----
   const scheduleReset = () => {
-    const TEST_MODE = false; // 👈 switch to false when done testing
+    const TEST_MODE = true; // 👈 switch to false when done testing
     const ms = TEST_MODE
       ? 5000
       : (() => {
