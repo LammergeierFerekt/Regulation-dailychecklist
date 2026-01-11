@@ -129,6 +129,8 @@
       const g = e.target.closest(`g[id^="button."]`);
       if (!g) return;
 
+    
+
       // If you want ONLY circle clicks, uncomment next 2 lines:
       // if (!circle) return;
 
@@ -142,6 +144,21 @@
 
       applyCompletionState();
     });
+
+
+    // ✅ Mobile touch support (add ONCE, not inside click)
+    svg.addEventListener(
+    "touchstart",
+    (e) => {
+        const g = e.target.closest(`g[id^="button."]`);
+        if (!g) return;
+
+        e.preventDefault(); // prevents ghost click on some browsers
+        g.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    },
+    { passive: false }
+    );
+
 
     // Keyboard support (Enter / Space)
     svg.addEventListener("keydown", (e) => {

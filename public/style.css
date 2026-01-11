@@ -183,3 +183,21 @@ h1 {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* =========================
+   MOBILE TOUCH POLISH
+   ========================= */
+
+/* remove ugly mobile tap highlight */
+#page, #page * {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* make taps feel instant */
+#page g[id^="button."] {
+  touch-action: manipulation;
+}
+
+/* subtle press feedback on touch */
+#page g[id^="button."]:active {
+  transform: scale(0.97);
+}
