@@ -1,0 +1,185 @@
+/* =========================
+   PAGE LAYOUT
+   ========================= */
+
+.page {
+  min-height: 100vh;
+  padding: 24px;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+
+  /* center the board area */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.topbar {
+  width: 100%;
+  max-width: 900px;
+  margin-bottom: 16px;
+}
+
+/* If you meant the page title in HTML, use h1 (not .h1).
+   If you meant SVG text styling, we style #page text below. */
+h1 {
+  margin: 0;
+  color: #3f4d52;
+  font-weight: 600;
+}
+
+/* =========================
+   BOARD WRAPPER (CENTER + NO CLIP)
+   ========================= */
+
+.board {
+  margin-top: 100px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  /* keeps it visually centered on the page */
+  flex: 1;
+
+  /* IMPORTANT: don’t clip hover/toggle animations */
+  overflow: visible;
+}
+
+/* =========================
+   SVG SIZE + CENTER
+   ========================= */
+
+#page {
+  display: block;
+  width: min(360px, 90vw);   /* tweak 360px to resize */
+  height: auto;
+  max-height: 80vh;
+
+  /* IMPORTANT: don’t clip hover/toggle animations */
+  overflow: visible;
+}
+
+/* =========================
+   SVG INTERACTION LAYER
+   ========================= */
+
+/* Buttons (groups) */
+#page g[id^="button."] {
+  cursor: pointer;
+  transition: transform 180ms ease, filter 180ms ease;
+  transform-origin: center;
+  /* subtle shadow by default */
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,.25));
+}
+
+/* Hover on group */
+#page g[id^="button."]:hover {
+  transform: translateY(-0.5px);
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,.35));
+}
+
+/* Circles (toggle target) */
+#page g[id^="button."] circle {
+  transition: transform 220ms ease, fill 220ms ease, filter 220ms ease;
+  filter: drop-shadow(0 1px 2px rgba(199, 125, 255, 0.75));
+  fill: rgb(255, 255, 255) !important;   /* soft translucent default */
+  opacity: 1;
+  /* helps transform behave consistently in some browsers */
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+/* Hover circle */
+#page g[id^="button."]:hover circle {
+  filter: drop-shadow(0 1px 2px rgba(98, 90, 125, 0.55));
+}
+
+/* ✅ Checked state: slide right + purple */
+#page g[id^="button."].is-checked circle {
+  transform: translateX(16px);
+  fill: #ffffff !important;
+  filter: drop-shadow(0 3px 3px rgba(163, 253, 255, 0.75));
+}
+
+/* SVG text (force override of inline svg styles) */
+#page text {
+  fill:#3f4d52 !important;
+  font-size: 12px !important;
+  font-family: Barlow, Arial, sans-serif !important;
+  font-weight: 300 !important;
+}
+
+
+
+
+
+/* =========================
+   COMPLETION MESSAGE TYPOGRAPHY
+   ========================= */
+
+#congrats-message {
+  position: fixed;
+  inset: 0;
+  display: none;                 /* JS toggles this */
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: #3f4d52;
+
+  backdrop-filter: blur(8px);
+  background: rgba(255, 255, 255, 0.55);
+  z-index: 9999;
+
+  text-align: center;
+}
+
+
+
+#congrats-message {
+  display: none;               /* JS toggles to flex */
+  flex-direction: column;
+  gap: 6px;
+  text-align: center;
+}
+
+/* Main line */
+#congrats-message .line-1 {
+  font-size: 45px;
+  color: #4d5e87;
+  font-family: Barlow, Arial, sans-serif;
+  font-weight: 300;
+  letter-spacing: -0.015em;
+}
+
+/* Secondary line */
+#congrats-message .line-2 {
+  font-size: 25px;
+  color: #4d5e87;
+  font-family: Barlow, Arial, sans-serif;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+}
+
+
+
+
+/* Remove focus outline for SVG interactive groups */
+#page g[id^="button."]:focus,
+#page g[id^="button."]:focus-visible {
+  outline: none;
+}
+
+/* Some browsers put the outline on inner elements */
+#page g[id^="button."] *:focus,
+#page g[id^="button."] *:focus-visible {
+  outline: none;
+}
+
+#page, #page * {
+  -webkit-tap-highlight-color: transparent;
+}
+
