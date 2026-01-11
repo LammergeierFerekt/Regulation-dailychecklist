@@ -125,7 +125,7 @@
   const scheduleReset = () => {
     const TEST_MODE = true; // 👈 switch to false when done testing
     const ms = TEST_MODE
-      ? 5000
+      ? 10000
       : (() => {
           const now = new Date();
           const midnight = new Date(
